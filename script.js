@@ -8,38 +8,40 @@ const quotes = [
     'Compassion: that is the one thing no machine ever had. Maybe it is the one thing that keeps us ahead of them.',
 ];
 
-const quote = document.getElementById("quote");
-const input = document.getElementById("typed-value");
-const start = document.getElementById("start");
-const message = document.getElementById("message");
-
+const quote = document.getElementById('quote');
+const input = document.getElementById('typed-value');
+const start = document.getElementById('start');
+const message = document.getElementById('message');
 
 let wordQueue;
-let quoteText;
 let highlightPosition;
 let startTime;
 
 function startGame() {
-    console.log("Game Started!");
+    console.log("Game started!");
 
-    const quoteIndex = Math.floor(Math.random() * quotes - length);
-    // will return a random number from 1 to 7
+    const quoteIndex = Math.floor(Math.random() * quotes.length);
+    const quoteText = quotes[quoteIndex];
 
-    quoteText = quotes[quoteIndex];
-    wordQueue = quoteText.split(" ");
-
-    quote.innerHTML = wordQueue.map((word) => `<span>${word}</span>`).join("");
+    wordQueue = quoteText.split(' ');
+    quote.innerHTML = wordQueue.map(word => (`<span>${word}</span>`)).join('');
 
     highlightPosition = 0;
-    quote.childNodes[highlightPosition].className = "highlight";
+    quote.childNodes[highlightPosition].className = 'highlight';
+
+    input.focus();
+    input.value = '';
+    message.innerText = '';
 
     startTime = new Date().getTime();
 
+    document.body.className = "";
+    start.className = "started";
+    setTimeout(() => { start.className = "button"; }, 2000);
 }
 
 function checkInput() {
-    // wordQueue[0] allows us to grab the first element in our wordQueue array using an array indexer
-    const currentWord = wordQueue[0].].replaceAll(".", "").replaceAll(",", "");
+    const currentWord = wordQueue[0].replaceAll(".", "").replaceAll(",", "");
     const typedValue = input.value.trim();
 
     if (currentWord !== typedValue) {
@@ -47,22 +49,24 @@ function checkInput() {
         return;
     }
 
-    wordQueue.shift();
-    input.value = "";
+    wordQueue.shift(); 
+    input.value = ""; 
+    quote.childNodes[highlightPosition].className = ""; 
 
-    quote.childNodes[highlightPosition].className = "";
-    highlightPosition++;
-    quote.childNodes[highlightPosition].className = "highlight";
+    if (wordQueue.length === 0) { 
+        gameOver();
+        return;
+    }
+
+    highlightPosition++;                                            
+    quote.childNodes[highlightPosition].className = 'highlight';    
 }
 
 function gameOver() {
-    const elapsedTime = new Date().getTime - startTime;
-
-    message.innerHTML = `<span class="congrats">Congratulations!</span><br>
-
-    `;
+    const elapsedTime = new Date().getTime() - startTime;
+    document.body.className = "winner";
+    message.innerHTML = `<span class="congrats">Congratulations!</span> <br> You finished in ${elapsedTime / 1000} seconds.`;
 }
 
-// element.addEventListener(event, function);
-input.addEventListener("input", checkInput);
-start.addEventListener("click", startGame);
+start.addEventListener('click', startGame);
+input.addEventListener('input', checkInput);
